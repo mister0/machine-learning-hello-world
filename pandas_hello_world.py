@@ -1,21 +1,24 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
 from sklearn.tree import DecisionTreeRegressor
 # from sklearn.ensemble import RandomForestRegressor
 
 # reading the data
-file_path = <add_your_csv_file_here>
+# file_path = <add_your_csv_file_here>
+file_path = './houses.csv'
 data = pd.read_csv(file_path)
 print(data.columns)
 
 # specifying which columns will we take in the model ... these are the "features" ...
+# features = <select the column names you want to incluide in the input>
 features = ['Rooms', 'Bathroom', 'Landsize', 'Lattitude', 'Longtitude']
 X = data[features]
-print(X.describe())
+X.describe()
 
 # top 5 rows
-print(X.head())
-# specifying what will we predict
+X.head()
+# specifying what value will we predict
 y = data.Price
 
 # split data into training and validation data, for both features and target
@@ -37,12 +40,6 @@ print(model.predict(X))
 val_predictions = model.predict(val_X)
 print(mean_absolute_error(val_y, val_predictions))
 
-
-
-
-
-
-
 # compare same model with different parameters ... for example max leaf nodes in Decision tree ...
 def get_mae(max_leaf_nodes, train_X, val_X, train_y, val_y):
     model = DecisionTreeRegressor(max_leaf_nodes=max_leaf_nodes, random_state=0)
@@ -51,14 +48,11 @@ def get_mae(max_leaf_nodes, train_X, val_X, train_y, val_y):
     mae = mean_absolute_error(val_y, preds_val)
     return(mae)
 
-
 candidate_max_leaf_nodes = [5, 25, 50, 100, 250, 500]
 # Write loop to find the ideal tree size from candidate_max_leaf_nodes
 for max_leaf_nodes in candidate_max_leaf_nodes:
     my_mae = get_mae(max_leaf_nodes, train_X, val_X, train_y, val_y)
     print("Max leaf nodes: %d  \t\t Mean Absolute Error:  %d" %(max_leaf_nodes, my_mae))
-
-
 
 # and then using the best value ... in this case it was 100 ...
 final_model = DecisionTreeRegressor(max_leaf_nodes=100)
